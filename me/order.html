@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Buy Airtime & Data | LoadXpress</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="../css/main.css" />
+    
+
+    <style>
+        :root {
+            --primary: #0f172a;
+            --secondary: #334155;
+            --accent: #6366f1;
+            --accent-hover: #4f46e5;
+            --bg-main: #f8fafc;
+            --text-dark: #1e293b;
+            --text-gray: #64748b;
+            --border: #e2e8f0;
+            --sidebar-width: 260px;
+            --mtn: #fbbf24;
+            --airtel: #ef4444;
+            --glo: #22c55e;
+            --mobile9: #65a30d;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; }
+        body { background: var(--bg-main); color: var(--text-dark); }
+
+        /* --- LAYOUT --- */
+        .app-layout { display: flex; min-height: 100vh; }
+
+
+
+        @media (max-width: 900px) {
+            .sidebar { transform: translateX(-100%); }
+            .sidebar.open { transform: translateX(0); }
+        }
+
+        .brand { display: flex; align-items: center; gap: 12px; font-weight: 800; font-size: 22px; margin-bottom: 50px; color: var(--primary); text-decoration: none; }
+        .logo-sq { background: linear-gradient(135deg, var(--primary), var(--accent)); color: white; width: 36px; height: 36px; border-radius: 10px; display: flex; align-items: center; justify-content: center; }
+
+        .nav-item {
+            display: flex; align-items: center; gap: 12px; padding: 12px; 
+            text-decoration: none; color: var(--text-gray); font-weight: 600; 
+            border-radius: 10px; transition: 0.2s; font-size: 14px; margin-bottom: 4px;
+        }
+        .nav-item:hover, .nav-item.active { background: #e0e7ff; color: var(--accent); }
+        .nav-item.active svg { stroke: var(--accent); }
+
+        /* --- MAIN CONTENT --- */
+        .main-view { flex: 1; margin-left: var(--sidebar-width); padding: 30px; transition: 0.3s; }
+        @media (max-width: 900px) { .main-view { margin-left: 0; padding: 20px; } }
+
+        /* Header */
+        .top-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; }
+        .profile-container { position: relative; }
+        .profile-trigger { width: 45px; height: 45px; border-radius: 50%; cursor: pointer; border: 2px solid white; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+
+        .profile-menu {
+            position: absolute; top: 60px; right: 0; width: 180px;
+            background: white; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            border: 1px solid var(--border); opacity: 0; visibility: hidden; transform: translateY(-10px);
+            transition: 0.2s; z-index: 100; overflow: hidden;
+        }
+        .profile-menu.active { opacity: 1; visibility: visible; transform: translateY(0); }
+        .menu-link { display: flex; align-items: center; gap: 10px; padding: 12px 16px; text-decoration: none; color: var(--text-dark); font-size: 13px; font-weight: 600; }
+        .menu-link:hover { background: #f8fafc; color: var(--accent); }
+        .menu-link.logout { color: #ef4444; border-top: 1px solid var(--border); }
+
+        /* --- FORM AREA --- */
+        .page-wrapper { max-width: 550px; margin: 0 auto; }
+
+        .toggle-container {
+            display: flex; background: #e2e8f0; padding: 5px; border-radius: 14px; margin-bottom: 25px;
+        }
+        .toggle-btn {
+            flex: 1; padding: 12px; border: none; border-radius: 10px; font-weight: 700;
+            font-size: 13px; cursor: pointer; transition: 0.3s; color: var(--text-gray); background: transparent;
+        }
+        .toggle-btn.active { background: white; color: var(--primary); box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
+
+        /* Network Selection */
+        .network-grid {
+            display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 15px;
+        }
+        .network-item {
+            border: 2px solid transparent; background: white; padding: 12px 5px; border-radius: 16px;
+            display: flex; flex-direction: column; align-items: center; gap: 8px;
+            cursor: pointer; transition: 0.2s; border: 1px solid var(--border);
+        }
+        .network-item.selected { border-color: var(--accent); background: #f5f3ff; }
+        .net-logo { width: 35px; height: 35px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: 800; font-size: 10px; }
+        .network-item span { font-size: 11px; font-weight: 700; color: var(--text-gray); }
+
+        /* Form Card */
+        .purchase-card {
+            margin-top: 20px;
+            background: white; border: 1px solid var(--border); border-radius: 24px; padding: 30px;
+            box-shadow: 0 10px 40px rgba(15, 23, 42, 0.03); margin-bottom: 30px;
+        }
+
+        .input-group { margin-bottom: 20px; }
+        .input-group label { display: block; font-size: 11px; font-weight: 800; text-transform: uppercase; color: var(--text-gray); margin-bottom: 8px; letter-spacing: 0.5px; }
+
+        .field-container { position: relative; display: flex; align-items: center; }
+        .field-container input, .field-container select {
+            width: 100%; padding: 15px 15px 15px 45px; border-radius: 12px; border: 1px solid var(--border);
+            font-size: 15px; font-weight: 600; background: #fcfdfe; transition: 0.2s; outline: none;
+        }
+        .field-container input:focus { border-color: var(--accent); background: white; box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1); }
+        .field-icon { position: absolute; left: 16px; color: var(--text-gray); }
+
+        .submit-btn {
+            width: 100%; padding: 16px; border-radius: 14px; border: none; background: var(--primary);
+            color: white; font-size: 16px; font-weight: 700; cursor: pointer; transition: 0.3s; margin-top: 10px;
+        }
+        .submit-btn:hover { background: var(--accent); transform: translateY(-2px); }
+
+        /* Services Grid (4 in a row) */
+        .services-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-top: 20px; }
+        .service-box {
+            background: white; border: 1px solid var(--border); border-radius: 14px;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            padding: 15px 5px; cursor: pointer; transition: 0.2s; height: 90px;
+        }
+        .service-box h4 { font-size: 10px; font-weight: 700; margin-top: 8px; }
+        .sb-icon { width: 30px; height: 30px; border-radius: 8px; display: flex; align-items: center; justify-content: center; }
+
+        .hidden { display: none; }
+    </style>
+</head>
+<body>
+
+    <div class="app-layout">
+        <aside class="sidebar" id="sidebar" style="display: flex;">
+            <div>
+                <div class="brand">
+                    <img src="/assets/logo.png" alt="LoadXpress Logo" style="width: 35px; height: 35px; object-fit: contain;" />
+                    <span>LoadXpress</span>
+                </div>
+                <nav class="side-nav">
+                    <a href="/me" class="nav-item">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
+                        Dashboard
+                    </a>
+
+                    <a href="#" class="nav-item active">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"></line><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
+                        Purchase
+                    </a>
+                    <a href="/me/transaction-history" class="nav-item">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+                        Transactions
+                    </a>
+
+
+                    <a href="/me/withdraw" class="nav-item">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22v-8m0-8V2"/><path d="M20 10c0-4.4-3.6-8-8-8s-8 3.6-8 8 3.6 8 8 8h.5"/><path d="M4 14l2 2 2-2"/><path d="M16 14l2 2 2-2"/></svg>
+                        Withdraw
+                    </a>
+
+
+
+                    <a href="#" class="nav-item">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <polyline points="16 18 22 12 16 6"></polyline>
+                            <polyline points="8 6 2 12 8 18"></polyline>
+                        </svg>
+                        APIs
+                    </a>
+
+
+
+                    <a href="/me/settings" class="nav-item">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+                        Settings
+                    </a>
+                </nav>
+            </div>
+        </aside>
+
+        <main class="main-view">
+
+            <header class="top-bar">
+                <div style="display: flex; align-items: center; gap: 15px;">
+                    <div class="hamburger" onclick="toggleSidebar()">
+                        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#1e293b" stroke-width="2.5"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+                    </div>
+                    <div class="page-title">
+                        <p>Top up Services</p>
+                        <h1>Airtime & Data</h1>
+                    </div>
+                </div>
+
+                <div class="profile-container">
+                    <img src="/assets/bolade.jpeg" alt="Profile" class="profile-trigger" onclick="toggleProfileMenu()">
+                    <div class="profile-menu" id="profileMenu">
+                        <a href="/me/settings" class="menu-link">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+                            Settings
+                        </a>
+                        <a href="/logout" class="menu-link logout">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
+                            Logout
+                        </a>
+                    </div>
+                </div>
+            </header>
+
+            
+
+            <div class="page-wrapper">
+                <div class="toggle-container">
+                    <button class="toggle-btn active" id="airtimeBtn" onclick="switchTab('airtime')">Buy Airtime</button>
+                    <button class="toggle-btn" id="dataBtn" onclick="switchTab('data')">Buy Data</button>
+                </div>
+
+                <div class="network-grid">
+                    <div class="network-item selected" onclick="selectNetwork(this)">
+                        
+                        <img src="../assets/mtn.jpeg" class="net-logo" />
+                        <span>MTN</span>
+                    </div>
+                    <div class="network-item" onclick="selectNetwork(this)">
+                        
+                        <img src="../assets/airtel.png" class="net-logo" />
+                        <span>Airtel</span>
+                    </div>
+                    <div class="network-item" onclick="selectNetwork(this)">
+                        
+                        <img src="../assets/glo.png" class="net-logo" />
+                        <span>Glo</span>
+                    </div>
+                    <div class="network-item" onclick="selectNetwork(this)">
+                        
+                        <img src="../assets/9m.png" width="35" height="35"  style="border-radius: 50%;" />
+                        <span>9mobile</span>
+                    </div>
+                </div>
+
+
+                <div class="services-grid">
+                    <div class="service-box">
+                        <div class="sb-icon" style="background:#fff7ed; color:#ea580c;"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22v-8m0-8V2"/><path d="M20 10c0-4.4-3.6-8-8-8s-8 3.6-8 8 3.6 8 8 8h.5"/><path d="M4 14l2 2 2-2"/><path d="M16 14l2 2 2-2"/></svg></div>
+                        <h4>Withdraw</h4>
+                    </div>
+                    <div class="service-box">
+                        <div class="sb-icon" style="background:#f0fdf4; color:#16a34a;"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"></line><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg></div>
+                        <h4>Bills</h4>
+                    </div>
+                    <div class="service-box">
+                        <div class="sb-icon" style="background:#fdf2f8; color:#db2777;"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="8.5" cy="7" r="4"></circle></svg></div>
+                        <h4>Referral</h4>
+                    </div>
+                    <div class="service-box">
+                        <div class="sb-icon" style="background:#eff6ff; color:#2563eb;"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line></svg></div>
+                        <h4>History</h4>
+                    </div>
+                </div>
+
+                <div class="purchase-card">
+                    <form>
+                        <div class="input-group">
+                            <label>Phone Number</label>
+                            <div class="field-container">
+                                <span class="field-icon">
+                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
+                                </span>
+                                <input type="tel" placeholder="0801 234 5678" required>
+                            </div>
+                        </div>
+
+                        <div class="input-group hidden" id="dataPlanField">
+                            <label>Select Data Plan</label>
+                            <div class="field-container">
+                                <span class="field-icon">
+                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+                                </span>
+                                <select>
+                                    <option>Select Plan</option>
+                                    <option>1GB - ₦300 (30 Days)</option>
+                                    <option>2GB - ₦600 (30 Days)</option>
+                                    <option>5GB - ₦1,450 (30 Days)</option>
+                                    <option>10GB - ₦2,800 (30 Days)</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="input-group" id="airtimeAmountField">
+                            <label>Amount (₦)</label>
+                            <div class="field-container">
+                                <span class="field-icon">
+                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"></line><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
+                                </span>
+                                <input type="number" placeholder="Min ₦50">
+                            </div>
+                        </div>
+
+                        <div class="input-group">
+                            <label>Transaction Pin</label>
+                            <div class="field-container">
+                                <span class="field-icon">
+                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+                                </span>
+                                <input type="password" maxlength="4" placeholder="****">
+                            </div>
+                        </div>
+
+                        <button type="submit" class="submit-btn" id="submitBtn">Purchase Airtime</button>
+                    </form>
+                </div>
+
+            </div>
+        </main>
+    </div>
+
+    <script src="../assets/js/main.js">
+       
+    </script>
+    
+    <script>
+
+        function switchTab(mode) {
+            const airtimeBtn = document.getElementById('airtimeBtn');
+            const dataBtn = document.getElementById('dataBtn');
+            const dataField = document.getElementById('dataPlanField');
+            const airtimeField = document.getElementById('airtimeAmountField');
+            const submitBtn = document.getElementById('submitBtn');
+
+            if (mode === 'airtime') {
+                airtimeBtn.classList.add('active');
+                dataBtn.classList.remove('active');
+                dataField.classList.add('hidden');
+                airtimeField.classList.remove('hidden');
+                submitBtn.innerText = "Purchase Airtime";
+            } else {
+                dataBtn.classList.add('active');
+                airtimeBtn.classList.remove('active');
+                dataField.classList.remove('hidden');
+                airtimeField.classList.add('hidden');
+                submitBtn.innerText = "Purchase Data";
+            }
+        }
+
+        function selectNetwork(el) {
+            document.querySelectorAll('.network-item').forEach(item => item.classList.remove('selected'));
+            el.classList.add('selected');
+        }
+    </script>
+</body>
+</html>

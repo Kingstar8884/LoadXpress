@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="format-detection" content="telephone=no">
+    <title>Dashboard | LoadXpress</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../css/main.css" />
+    
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+</head>
+<body>
+
+    <div class="sidebar-overlay" id="overlay" onclick="toggleSidebar()"></div>
+    <div id="toast">Copied to clipboard!</div>
+
+    <div class="app-layout">
+        <aside class="sidebar" id="sidebar">
+            <div>
+                <div class="brand">
+                    <img src="/assets/logo.png" alt="LoadXpress Logo" style="width: 35px; height: 35px; object-fit: contain;" />
+                    <span>LoadXpress</span>
+                </div>
+                <nav class="side-nav">
+                    <a href="#" class="nav-item active">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
+                        Dashboard
+                    </a>
+
+                    <a href="/me/order" class="nav-item">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"></line><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
+                        Purchase
+                    </a>
+                    <a href="/me/transaction-history" class="nav-item">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+                        Transactions
+                    </a>
+
+
+                    <a href="/me/withdraw" class="nav-item">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22v-8m0-8V2"/><path d="M20 10c0-4.4-3.6-8-8-8s-8 3.6-8 8 3.6 8 8 8h.5"/><path d="M4 14l2 2 2-2"/><path d="M16 14l2 2 2-2"/></svg>
+                        Withdraw
+                    </a>
+
+
+                    
+                    <a href="#" class="nav-item">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <polyline points="16 18 22 12 16 6"></polyline>
+                            <polyline points="8 6 2 12 8 18"></polyline>
+                        </svg>
+                        APIs
+                    </a>
+
+
+                    
+                    <a href="/me/settings" class="nav-item">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+                        Settings
+                    </a>
+                </nav>
+            </div>
+        </aside>
+
+        <main class="main-view">
+            <header class="top-bar">
+                <div style="display: flex; align-items: center; gap: 15px;">
+                    <div class="hamburger" onclick="toggleSidebar()">
+                        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#1e293b" stroke-width="2.5"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+                    </div>
+                    <div class="page-title">
+                        <p>Welcome back,</p>
+                        <h1>Kingstar!</h1>
+                    </div>
+                </div>
+
+                <div class="profile-container">
+                    <img src="/assets/bolade.jpeg" alt="Profile" class="profile-trigger" onclick="toggleProfileMenu()">
+                    <div class="profile-menu" id="profileMenu">
+                        <a href="/me/settings" class="menu-link">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+                            Settings
+                        </a>
+                        <a href="/logout" class="menu-link logout">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
+                            Logout
+                        </a>
+                    </div>
+                </div>
+            </header>
+
+            <div class="dashboard-grid">
+                <div class="wallet-card">
+                    <div class="card-top">
+                        <div class="chip-icon"></div>
+                        <span class="card-label">Personal Account</span>
+                    </div>
+
+                    <div class="balance-section">
+                        <span style="font-size: 12px; opacity: 0.8">Total Balance</span>
+                        <h2>₦ 1,332, 245,200.43</h2>
+                        <span class="growth-badge">+12%</span>
+                    </div>
+
+                    <div class="card-bottom">
+                        <div class="account-info" onclick="copyText('8029334112')">
+                            <span class="bank-name">Wema Bank</span>
+                            <div class="acc-digits">
+                                8029 334 112 
+                                <svg id="copy-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+                            </div>
+                        </div>
+                        <a class="w-btn" href="/me/withdraw" style="text-decoration: none;">Transfer</a>
+                    </div>
+                </div>
+
+                <div class="services-grid">
+                    <div class="service-box">
+                        <div class="sb-icon" style="background: #fff7ed; color: #ea580c;">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                        </div>
+                        <h4>Airtime</h4>
+                    </div>
+                    <div class="service-box">
+                        <div class="sb-icon" style="background: #eff6ff; color: #2563eb;">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"></path></svg>
+                        </div>
+                        <h4>Data</h4>
+                    </div>
+                    <div class="service-box">
+                        <div class="sb-icon" style="background: #f0fdf4; color: #16a34a;">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"></line><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
+                        </div>
+                        <h4>Bills</h4>
+                    </div>
+                    <div class="service-box">
+                        <div class="sb-icon" style="background: #fdf2f8; color: #db2777;">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="8.5" cy="7" r="4"></circle><line x1="20" y1="8" x2="20" y2="14"></line><line x1="23" y1="11" x2="17" y2="11"></line></svg>
+                        </div>
+                        <h4>Referral</h4>
+                    </div>
+                </div>
+
+                <div class="chart-card">
+                    <div class="chart-header">
+                        <h3>Weekly Spending Overview</h3>
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#64748b" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="spendingChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <section class="tx-section">
+                <div class="section-head">
+                    <h3>Recent Transactions</h3>
+                    <a href="/me/transaction-history" style="color: var(--accent); font-weight: 700; font-size: 13px; text-decoration: none;">View All</a>
+                </div>
+
+                <div class="tx-row">
+                    <div style="display:flex; align-items:center">
+                        <img src="/assets/mtn.jpeg" class="tx-img"/>
+                        <div class="tx-info">
+                            <h5>MTN Airtime</h5>
+                            <p>0801 234 5678</p>
+                        </div>
+                    </div>
+                    <div class="tx-amount neg">-₦ 1,000.00</div>
+                </div>
+
+                <div class="tx-row">
+                    <div style="display:flex; align-items:center">
+                        <div class="tx-img" style="color: #16a34a; background: #dcfce7;">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 19V5M5 12l7-7 7 7"/></svg>
+                        </div>
+                        <div class="tx-info">
+                            <h5>Wallet Fund</h5>
+                            <p>Bank Transfer</p>
+                        </div>
+                    </div>
+                    <div class="tx-amount pos">+₦ 50,000.00</div>
+                </div>
+
+                <div class="tx-row">
+                    <div style="display:flex; align-items:center">
+                        <div class="tx-img" style="color: #16a34a; background: #dcfce7;">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 19V5M5 12l7-7 7 7"/></svg>
+                        </div>
+                        <div class="tx-info">
+                            <h5>Wallet Fund</h5>
+                            <p>Bank Transfer</p>
+                        </div>
+                    </div>
+                    <div class="tx-amount pos">+₦ 120,000.00</div>
+                </div>
+
+
+                <div class="tx-row">
+                    <div style="display:flex; align-items:center">
+                        
+                        <img src="/assets/airtel.png" class="tx-img"/>
+                        <div class="tx-info">
+                            <h5>AIRTEL Airtime</h5>
+                            <p>090 1994 8884</p>
+                        </div>
+                    </div>
+                    <div class="tx-amount neg">-₦ 1,250.00</div>
+                </div>
+
+                <div class="tx-row">
+                    <div style="display:flex; align-items:center">
+                        <img src="/assets/mtn.jpeg" class="tx-img"/>
+                        <div class="tx-info">
+                            <h5>MTN Airtime</h5>
+                            <p>0801 234 5678</p>
+                        </div>
+                    </div>
+                    <div class="tx-amount neg">-₦ 5,000.00</div>
+                </div>
+                
+            </section>
+        </main>
+    </div>
+
+
+    <div class="fab-container" id="fab">
+        <div class="fab-menu">
+            <div class="fab-item" onclick="window.location.reload()"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path></svg></div>
+            <div class="fab-item"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"></path></svg></div>
+            <div class="fab-item"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg></div>
+        </div>
+        <div class="fab-main" id="fabTrigger">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+        </div>
+    </div>
+
+    <script src="../assets/js/main.js"></script>
+    
+    <script>
+ 
+        // 3. COPY FUNCTIONALITY
+        function copyText(text) {
+            navigator.clipboard.writeText(text).then(() => {
+                const toast = document.getElementById("toast");
+                toast.className = "show";
+                setTimeout(() => { toast.className = toast.className.replace("show", ""); }, 3000);
+            });
+        }
+
+        // 4. CHART CONFIG
+        const ctx = document.getElementById('spendingChart').getContext('2d');
+        let gradient = ctx.createLinearGradient(0, 0, 0, 300);
+        gradient.addColorStop(0, 'rgba(99, 102, 241, 0.4)');
+        gradient.addColorStop(1, 'rgba(99, 102, 241, 0.0)');
+
+        new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+                datasets: [{
+                    label: 'Spent',
+                    data: [12000, 19000, 8000, 35000, 12000, 32000, 24000],
+                    borderColor: '#6366f1',
+                    backgroundColor: gradient,
+                    borderWidth: 2,
+                    tension: 0.4,
+                    fill: true,
+                    pointRadius: 3,
+                    pointHoverRadius: 4
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { display: false } },
+                scales: {
+                    x: { grid: { display: false }, ticks: { color: '#94a3b8', font: {size:11} } },
+                    y: { display: false}
+                }
+            }
+        });
+
+
+
+        
+
+        // 4. IMPROVED DRAGGABLE FAB
+        const fab = document.getElementById('fab');
+        const trigger = document.getElementById('fabTrigger');
+        let isDragging = false, startX, startY, initialLeft, initialTop;
+
+        // Mouse/Touch Handlers
+        trigger.addEventListener('mousedown', dragStart);
+        trigger.addEventListener('touchstart', dragStart, {passive: false});
+
+        function dragStart(e) {
+            const clientX = e.clientX || e.touches[0].clientX;
+            const clientY = e.clientY || e.touches[0].clientY;
+            startX = clientX; startY = clientY;
+            const rect = fab.getBoundingClientRect();
+            initialLeft = rect.left; initialTop = rect.top;
+
+            document.addEventListener('mousemove', dragMove);
+            document.addEventListener('touchmove', dragMove, {passive: false});
+            document.addEventListener('mouseup', dragEnd);
+            document.addEventListener('touchend', dragEnd);
+        }
+
+        function dragMove(e) {
+            const clientX = e.clientX || e.touches[0].clientX;
+            const clientY = e.clientY || e.touches[0].clientY;
+
+            if (Math.abs(clientX - startX) > 5 || Math.abs(clientY - startY) > 5) {
+                isDragging = true;
+                e.preventDefault();
+                fab.classList.remove('active'); // Close menu while dragging
+
+                let newLeft = initialLeft + (clientX - startX);
+                let newTop = initialTop + (clientY - startY);
+
+                // Boundaries
+                const maxLeft = window.innerWidth - 60;
+                const maxTop = window.innerHeight - 60;
+                newLeft = Math.max(10, Math.min(newLeft, maxLeft));
+                newTop = Math.max(10, Math.min(newTop, maxTop));
+
+                fab.style.left = `${newLeft}px`;
+                fab.style.top = `${newTop}px`;
+                fab.style.bottom = 'auto'; fab.style.right = 'auto';
+            }
+        }
+
+        function dragEnd() {
+            document.removeEventListener('mousemove', dragMove);
+            document.removeEventListener('touchmove', dragMove);
+            document.removeEventListener('mouseup', dragEnd);
+            document.removeEventListener('touchend', dragEnd);
+
+            if (isDragging) {
+                // Snap to nearest vertical edge
+                const rect = fab.getBoundingClientRect();
+                const screenWidth = window.innerWidth;
+                const snapThreshold = screenWidth / 2;
+
+                if (rect.left < snapThreshold) {
+                    fab.style.left = '20px'; // Snap Left
+                } else {
+                    fab.style.left = `${screenWidth - 76}px`; // Snap Right
+                }
+                setTimeout(() => isDragging = false, 100);
+            }
+        }
+
+        trigger.addEventListener('click', (e) => {
+            if (!isDragging) fab.classList.toggle('active');
+        });
+
+
+       // setTimeout(() => fab.classList.add('active'), 1000);
+        
+
+
+    </script>
+</body>
+</html>

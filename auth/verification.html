@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0 maximum-scale=1.0, user-scalable=no">
+    <title>LoadXpress | Premium Access</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../css/auths-verification.css">
+</head>
+<body>
+
+    <div class="page-wrapper">
+        <div class="orb orb-1"></div>
+
+        <div class="auth-wrapper">
+            <div class="verification-container">
+                <a href="/auth/signin" class="back-link">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 12H5m7-7l-7 7 7 7"/></svg>
+                    <span>Back</span>
+                </a>
+
+                <div class="verification-header">
+                    <div class="icon-circle">
+                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+                    </div>
+                    <h1>Verify your phone</h1>
+                    <p>We've sent a 4-digit code to <strong>+234 ••• ••• 8829</strong></p>
+                </div>
+
+                <form class="otp-form">
+                    <div class="otp-input-group">
+                        <input type="text" maxlength="1" pattern="\d*" inputmode="numeric" autofocus>
+                        <input type="text" maxlength="1" pattern="\d*" inputmode="numeric">
+                        <input type="text" maxlength="1" pattern="\d*" inputmode="numeric">
+                        <input type="text" maxlength="1" pattern="\d*" inputmode="numeric">
+                    </div>
+
+                    <button type="submit" class="main-submit">
+                        <span>Verify Account</span>
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                    </button>
+                </form>
+
+                <div class="resend-section">
+                    <p>Didn't receive the code?</p>
+                    <button id="resendBtn" class="resend-btn">Resend Code <span>(0:59)</span></button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+    <script>
+
+        const inputs = document.querySelectorAll('.otp-input-group input');
+
+        inputs.forEach((input, index) => {
+            input.addEventListener('keyup', (e) => {
+                if (e.target.value.length === 1 && index < inputs.length - 1) {
+                    inputs[index + 1].focus(); // Move to next box
+                }
+                if (e.key === "Backspace" && index > 0) {
+                    inputs[index - 1].focus(); // Move back on delete
+                }
+            });
+        });
+
+    </script>
+    
+
+
+</body>
+</html>
