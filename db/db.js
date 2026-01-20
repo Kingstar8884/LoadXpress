@@ -81,6 +81,9 @@ const createUser = async (data) => {
         $set: {
           activationCode,
           activationCodeExpires: Date.now() + (60 * 30 * 1000),
+        },
+        $inc: {
+          linkResent: 1
         }
       });
     };

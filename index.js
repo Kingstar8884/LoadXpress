@@ -177,6 +177,7 @@ fastify.post('/auth/signup', async (request, reply) => {
       activationCode = uuidv4();
       createObj.activationCode = activationCode;
         createObj.activationCodeExpires = Date.now() + (60 * 30 * 1000);
+      createObj.linkResent = 0;
         createObj.email = email;
         createObj.phone = phone;
         createObj.password = password;
