@@ -54,7 +54,7 @@ overflow: hidden;
   color: white;
 }
 
-.brand-header { display: flex; align-items: center; gap: 12px; margin-bottom: 30px; }
+.brand-header { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; }
 .app-logo { background: var(--accent); padding: 8px; border-radius: 10px; display: flex; }
 .brand-name { font-weight: 800; font-size: 20px; letter-spacing: -0.5px; }
 
@@ -89,8 +89,9 @@ overflow: hidden;
 .form-title h2 { font-size: 26px; font-weight: 800; letter-spacing: -1px; }
 .form-title p { color: var(--text-muted); font-size: 14px; margin-top: 5px; }
 
-.auth-options { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin: 30px 0; }
-.social-btn {  color: #000; padding: 12px; border: 1.5px solid var(--border); border-radius: 16px; 
+.auth-options { width: 100%; display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin: 30px 0; }
+
+.social-btn {  color: #000; padding: 12px; border: 1px solid var(--border); border-radius: 20px; 
   background: white; font-weight: 700; font-size: 14px; cursor: pointer;
   display: flex; align-items: center; justify-content: center; gap: 10px; transition: 0.3s;
 }

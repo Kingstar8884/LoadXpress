@@ -3,6 +3,7 @@ const Fastify = require('fastify');
 const cookie = require('@fastify/cookie');
 const session = require('@fastify/session');
 const fastifyStatic = require('@fastify/static');
+const { OAuth2Client } = require('google-auth-library');
 const path = require('path');
 const { v4: uuidv4 } = require('uuid');
 const { sendVerificationEmail } = require('./utils/email.js');
@@ -14,6 +15,7 @@ const {
 } = require('./db/db.js');
 
 const fastify = Fastify({ logger: false });
+const googleClient = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
 fastify.register(fastifyStatic, {
   root: path.join(__dirname, 'public'),
@@ -88,46 +90,108 @@ fastify.get('/auth/verification', async (request, reply) => {
 
 
 fastify.post('/auth/signup', async (request, reply) => {
-  console.log(req.body);
-  
-  const { email, phone, password, c } = request.body;
-  if (!email || !phone || !password){
+  try {
+
+  let { email, phone, password, c } = request.body;
+  let signupWith = "email";
+
+  if (!c && (!email || !phone || !password)){
     return reply.send({
       success: false,
       error: "Please fill in all fields"
     });
   };
-  if (email.length < 5 || !email.includes('@') || !email.includes('.')){
+  if (c) signupWith = "google";
+  
+  if (signupWith === "email"){
+  
+  if (!email || email.length < 5 || !email.includes('@') || !email.includes('.')){
     return reply.send({
       success: false,
-      error: "Please enter a valid email address"
+      error: "Please enter a valid email address!"
     });
   };
-  if (phone.length !== 10 || isNaN(phone)){
+  if (!phone || phone.length !== 10 || isNaN(phone)){
     return reply.send({
       success: false,
-      error: "Please enter a valid phone number"
+      error: "Please enter a valid phone number!"
     });
   };
-  if (password.length < 8){
+  if (!password || password.length < 8){
     return reply.send({
       success: false,
-      error: "Password must be at least 8 characters long"
+      error: "Password must be at least 8 characters long!"
     });
+  };
+  };
+  
+  let payload = null;
+  if (signupWith === "google"){
+
+    const ticket = await googleClient.getTokenInfo(c);
+
+    if (!ticket){
+      return reply.send({
+        success: false,
+        error: "Invalid Google token. Please try again!"
+      });
+    };
+
+    if (ticket.aud !== process.env.GOOGLE_CLIENT_ID){
+      return reply.send({
+        success: false,
+        error: "Invalid Google token. Please try again!"
+      });
+    };
+
+    if (!ticket.email_verified){
+      return reply.send({
+        success: false,
+        error: "Please verify your email with Google first!"
+      });
+    };
+
+    googleClient.setCredentials({ access_token: c });
+
+    const response = await googleClient.request({url: "https://www.googleapis.com/oauth2/v3/userinfo"});
+
+    payload = response.data;
+
+    if (!payload){
+      return reply.send({
+        success: false,
+        error: "Invalid Google token. Please try again!"
+      });
+    };
+    
   };
 
-  const activationCode = uuidv4();
+  let activationCode = null;
 
-  try {
-  const _id = await createUser({
-    activated: false,
-    activationCode,
-    activationCodeExpires: Date.now() + (60 * 30 * 1000),
-    linkSent: 0,
-    email: email,
-    phone: phone,
-    password: password
-  });
+    const createObj = {
+        balance: 0.00,
+        activated: signupWith === "google" ? true : false,
+        signupWith
+      };
+    if (signupWith === "email"){
+      activationCode = uuidv4();
+      createObj.activationCode = activationCode;
+        createObj.activationCodeExpires = Date.now() + (60 * 30 * 1000);
+        createObj.email = email;
+        createObj.phone = phone;
+        createObj.password = password;
+        createObj.picture = "/assets/profiles/default-profile.png"
+    };
+
+    if (signupWith === "google"){
+      createObj.googleId = payload.sub;
+      createObj.email = payload.email;
+      createObj.firstName = payload.given_name;
+      createObj.lastName = payload.family_name;
+      createObj.picture = payload.picture;
+    };
+    
+  const _id = await createUser(createObj);
     
   if (!_id){
     return reply.send({
@@ -136,13 +200,19 @@ fastify.post('/auth/signup', async (request, reply) => {
     });
   };
 
-  await sendVerificationEmail(email, activationCode);
+  if (signupWith === "email") await sendVerificationEmail(email, activationCode);
+    
+    if (signupWith === "google"){
+      request.session.user = _id;
+    };
     
   return reply.send({
-    success: true
+    success: true,
+    go_to: signupWith === "google" ? '/me' : false
   });
-  }  catch (error){
-    console.log(error.message);
+    
+  } catch (error){
+    console.log(error);
     return reply.send({
       success: false,
       error: error.message
@@ -153,6 +223,7 @@ fastify.post('/auth/signup', async (request, reply) => {
 
 
 fastify.get('/auth/activate', async (request, reply) => {
+  
   const { token } = request.query;
   if (!token){
     return reply.send({
@@ -187,7 +258,6 @@ fastify.get('/auth/activate', async (request, reply) => {
       error: "Error while activating your account. Please try again later!"
     });
   };
-  console.log(user._id);
   request.session.user = user._id;
   return reply.redirect('/me');
 });
