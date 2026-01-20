@@ -3,9 +3,145 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0 maximum-scale=1.0, user-scalable=no">
-    <title>LoadXpress | Premium Access</title>
+    <title>LoadXpress | Login Verification</title>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="../css/auths-verification.css">
+
+    <style>
+        :root {
+          --primary: #0f172a;
+          --accent: #6366f1;
+          --bg-light: #f8fafc;
+          --border: #e2e8f0;
+          --text-main: #1e293b;
+          --text-muted: #64748b;
+          --glass: rgba(255, 255, 255, 0.9);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; }
+
+
+        body {
+            width: 100%;
+            background: var(--bg-light); color: var(--text-main); min-height: 100vh; overflow-x: hidden; }
+
+
+        .auth-wrapper {
+          display: flex;
+          flex-direction: column; /* Mobile Default */
+          width: 100%;
+          max-width: 1100px;
+          background: var(--glass);
+          backdrop-filter: blur(20px);
+          border: 1px solid white;
+          border-radius: 40px;
+          box-shadow: 0 40px 100px -20px rgba(0,0,0,0.08);
+          overflow: hidden;
+          margin: auto;
+        }
+
+
+        /* Container sizing */
+        .verification-container {
+            max-width: 450px;
+            margin: 0 auto;
+            padding: 60px 40px;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        .back-link {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+            color: var(--text-muted);
+            font-weight: 700;
+            font-size: 14px;
+            margin-bottom: 40px;
+        }
+
+        .verification-header { margin-bottom: 40px; }
+
+        .icon-circle {
+            width: 64px;
+            height: 64px;
+            background: #e0e7ff;
+            color: var(--accent);
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 24px;
+        }
+
+        .verification-header h1 { font-size: 28px; font-weight: 800; letter-spacing: -1px; }
+        .verification-header p { color: var(--text-muted); margin-top: 10px; font-size: 15px; }
+
+        /* OTP Inputs Grid */
+        .otp-input-group {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 7px;
+            margin-bottom: 30px;
+        }
+
+        .otp-input-group input {
+            height: 60px;
+            width: 100%;
+            text-align: center;
+            font-size: 32px;
+            font-weight: 800;
+            border-radius: 20px;
+            border: 2px solid var(--border);
+            background: #f8fafc;
+            transition: 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .otp-input-group input:focus {
+            border-color: var(--accent);
+            background: white;
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(99, 102, 241, 0.15);
+        }
+
+        /* Resend Section */
+        .resend-section {
+            text-align: center;
+            margin-top: 40px;
+        }
+
+        .resend-section p { font-size: 14px; color: var(--text-muted); }
+
+        .resend-btn {
+            background: none;
+            border: none;
+            color: var(--accent);
+            font-weight: 800;
+            font-size: 14px;
+            cursor: pointer;
+            margin-top: 8px;
+            padding: 10px;
+        }
+
+        .resend-btn span { color: var(--text-muted); font-weight: 500; }
+
+        /* Animation for the submit button success icon */
+        .main-submit svg { transition: 0.3s; }
+        .main-submit:hover svg { transform: scale(1.2); }
+
+
+        .main-submit { 
+          width: 100%; padding: 20px; border: none; border-radius: 20px; 
+          background: var(--primary); color: white; font-weight: 800; font-size: 16px;
+          cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 12px;
+          box-shadow: 0 20px 40px -10px rgba(15, 23, 42, 0.3); transition: 0.3s;
+        }
+        .main-submit:hover { background: var(--accent); transform: translateY(-2px); }
+
+    </style>
+    
 </head>
 <body>
 
@@ -23,52 +159,151 @@
                     <div class="icon-circle">
                         <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
                     </div>
-                    <h1>Verify your phone</h1>
-                    <p>We've sent a 4-digit code to <strong>+234 ••• ••• 8829</strong></p>
+                    <h1>Account verification</h1>
+                    <p>We've sent a 6-digit code to <strong id="email"></strong></p>
                 </div>
 
-                <form class="otp-form">
+                <form id="otp-form" class="otp-form">
                     <div class="otp-input-group">
                         <input type="text" maxlength="1" pattern="\d*" inputmode="numeric" autofocus>
+                        <input type="text" maxlength="1" pattern="\d*" inputmode="numeric">
+                        <input type="text" maxlength="1" pattern="\d*" inputmode="numeric">
                         <input type="text" maxlength="1" pattern="\d*" inputmode="numeric">
                         <input type="text" maxlength="1" pattern="\d*" inputmode="numeric">
                         <input type="text" maxlength="1" pattern="\d*" inputmode="numeric">
                     </div>
 
                     <button type="submit" class="main-submit">
-                        <span>Verify Account</span>
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                        <span>Verify Login</span>
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
                     </button>
                 </form>
 
                 <div class="resend-section">
                     <p>Didn't receive the code?</p>
-                    <button id="resendBtn" class="resend-btn">Resend Code <span>(0:59)</span></button>
+                    <button id="resendBtn" class="resend-btn" disabled>Resend Code <span id="timer"</span></button>
                 </div>
             </div>
         </div>
     </div>
-
-
+    
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="../assets/js/utils.js"></script>
 
     <script>
-
+        const resendBtn = document.getElementById('resendBtn');
+        const form = document.getElementById('otp-form');
         const inputs = document.querySelectorAll('.otp-input-group input');
+        const submitBtn = document.querySelector('.main-submit');
+        const email = document.getElementById('email');
+
+        const ee = new URLSearchParams(window.location.search).get('email');
+        
+        const [name, domain] = ee.split('@');
+
+        const short =
+          name.length <= 8
+            ? `${name.slice(0, 2)}•••••@${domain}`
+            : `${name.slice(0, 5)}•••••${name.slice(-2)}@${domain}`;
+
+        email.textContent = short;
+
+        const alertIt = (type, message) => {
+            Swal.fire({
+                title: message,
+                icon: type,
+                toast: true,
+                position: 'top-end',
+                showConfirmButton: false,
+                timer: 3000,
+                timerProgressBar: true
+            });
+        };
 
         inputs.forEach((input, index) => {
             input.addEventListener('keyup', (e) => {
                 if (e.target.value.length === 1 && index < inputs.length - 1) {
-                    inputs[index + 1].focus(); // Move to next box
+                    inputs[index + 1].focus();
                 }
                 if (e.key === "Backspace" && index > 0) {
-                    inputs[index - 1].focus(); // Move back on delete
-                }
+                    inputs[index - 1].focus();
+                };
             });
         });
+        resendBtn.addEventListener('click', async () => {
+            resendBtn.disabled = true;
+            const response = await fetch('/auth/resend', {
+                method: 'POST'
+            });
+            if (!response.ok){
+                resendBtn.disabled = false;
+                return alertIt('error','Error while resending the code. Please try again later!');
+            };
+            const data = await response.json();
+            if (data.success === false){
+                resendBtn.disabled = false;
+                return alertIt('error',data.error);
+            };
+            alertIt('success','Code resent successfully!');
+            resendBtn.disabled = true;
+            window.__seconds = 59;
+        });
 
-    </script>
+
+    form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const otp = Array.from(inputs).map(input => input.value).join('');
+
+            submitBtn.innerHTML = ` ${rolling} Verifying...`;
+            submitBtn.disabled = true;
+
+            const response = await fetch('/auth/verify', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ otp })
+            });
+
+            if (!response.ok){
+                 submitBtn.innerHTML = `<span>Verify Login</span> ${arrow}`;
+                 submitBtn.disabled = false;
+                return alertIt('error','Error while verifying your login. Please try again later!');
+            };
+            const data = await response.json();
+            if (data.success === false){
+                 submitBtn.innerHTML = `<span>Verify Login</span> ${arrow}`;
+                 submitBtn.disabled = false;
+                alertIt('error',data.error);
+                if (data.redirect){
+                    setTimeout(() => {
+                        window.location.href = data.redirect;
+                    }, 1000);
+                };
+                return;
+            };
+            
+            alertIt('success','Login successfully! Redirecting to dashboard...');
+            submitBtn.innerHTML = ` ${rolling} Redirecting...`;
+            setTimeout(() => {
+                window.location.href = data.go_to;
+            }, 1000);
+});
+
+
+setInterval(() => {
+    if (window.__seconds === 0) return;
+    if (window.__seconds === undefined) window.__seconds = 59;
+    window.__seconds--;
+    const seconds = window.__seconds;
+    const timer = document.getElementById('timer');
+    timer.textContent = `(0:${seconds < 10 ? '0' + seconds : seconds})`;
+    if (seconds === 0){
+        resendBtn.disabled = false;
+    };
+}, 1000);
     
-
+    </script>
 
 </body>
 </html>

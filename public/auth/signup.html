@@ -213,6 +213,17 @@
                                 </div>
                             </div>
 
+
+                            <div
+                                id="captchaWidget"
+                                style="
+                                  display: flex;
+                                  justify-content: center;
+                                  align-items: center;
+                                  margin: 20px 0;
+                                "
+                              ></div>
+
                             <button class="main-submit" type="submit">
                                 <span> Register Now </span>
                                 <svg
@@ -263,6 +274,7 @@
             async
             defer
         ></script>
+          <script src="https://hcaptcha.com/1/api.js" async defer></script>
         <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
         <script src="../assets/js/utils.js"></script>
 
@@ -274,7 +286,7 @@
                 e.preventDefault();
                 alertIt(
                     "info",
-                    "Passkey is available only on login. Please use Google or Email for signup.",
+                    "Signup with passkey is not available at the moment. Please use Email or Google Sign-Up!",
                 );
             });
 
@@ -304,6 +316,7 @@
                                   email: datas.email,
                                   phone: datas.phone,
                                   password: datas.password,
+                                token: window.__captchaToken
                               }),
                     });
 
@@ -416,6 +429,11 @@
                         return;
                     }
                     passwordError.style.display = "none";
+
+                    if (!window.__captchaToken){
+                        alertIt("error", "Please complete the captcha!");
+                        return;
+                    }
                     form.querySelector('button[type="submit"]').innerHTML =
                         `<span>Register Now</span> ${rolling}`;
                     form.querySelector('button[type="submit"]').disabled = true;
@@ -441,9 +459,15 @@
                 } catch (e) {
                     alertIt(
                         "error",
-                        "Error while initializing Google Sign-In. Please refresh the page!",
+                        "Error while initializing Google Sign-Up. Please refresh the page!",
                     );
-                }
+                };
+
+                CAPTCHA_WID = hcaptcha.render("captchaWidget", {
+                  sitekey: "994c2296-e6a8-4d28-9b52-df1cb73e48a6",
+                  callback: (t) => {window.__captchaToken = t}
+                });
+                
             };
         </script>
     </body>

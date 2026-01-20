@@ -5,7 +5,7 @@ const { v4: uuidv4 } = require('uuid');
 const { sendVerificationEmail } = require('../utils/email.js');
 const saltRounds = 10;
 
-let users = null;
+let users = null, codes = null;
 
 const connectDb = async () => {
   try {
@@ -14,23 +14,41 @@ const connectDb = async () => {
     console.log('✅ Database Connected');
     const db = client.db('loadxpress');
     users = db.collection('users');
+    codes = db.collection('codes');
 
-    const indexes = await users.indexes();
-    if (!indexes.find(index => index.name === 'email_1')){
+    const usersCollection = await db.listCollections({name: 'users'}).toArray();
+    if (!usersCollection.length){
+      await db.createCollection('users');
+      console.log('✅ Users Collection Created!');
+    };
+    const userIndexes = await users.indexes();
+    if (!userIndexes.find(index => index.name === 'email_1')){
       await users.createIndex({ email: 1 }, { unique: true });
       console.log('✅ Email Index Created');
     };
-    if (!indexes.find(index => index.name === 'phone_1')){
+    if (!userIndexes.find(index => index.name === 'phone_1')){
       await users.createIndex({ phone: 1 }, { unique: true, sparse: true });
       console.log('✅ Phone Index Created');
     };
-    if (!indexes.find(index => index.name === 'uid_1')){
+    if (!userIndexes.find(index => index.name === 'uid_1')){
       await users.createIndex({ uid: 1 }, { unique: true });
       console.log('✅ UID Index Created');
     };
-    if (!indexes.find(index => index.name === 'googleId_1')){
+    if (!userIndexes.find(index => index.name === 'googleId_1')){
       await users.createIndex({ googleId: 1 }, { unique: true, sparse: true });
       console.log('✅ Google ID Index Created');
+    };
+
+
+    const codesCollection = await db.listCollections({name: 'codes'}).toArray();
+    if (!codesCollection.length){
+      await db.createCollection('codes');
+      console.log('✅ Codes Collection Created!');
+    };
+    const codesIndexes = await codes.indexes();
+    if (!codesIndexes.find(index => index.name === 'expiresAt_1')){
+      await codes.createIndex({expiresAt: 1}, {expireAfterSeconds: 0});
+      console.log('✅ Codes Auto Delete Initialized!');
     };
   } catch (error) {
     throw new Error('🚨 Error connecting to MongoDB:'+ error);
@@ -110,15 +128,49 @@ const updateUser = async (_id, data) => {
     return result.modifiedCount > 0;
   } catch (error) {
     console.log(error);
-    return false;
+    throw new Error('Error updating user');
   };
 };
 
+
+const createCode = async (data) => {
+  try {
+    await codes.insertOne(data);
+    return true;
+  } catch (error){
+    console.log(error);
+    throw new Error('Error creating code');
+  };
+};
+
+
+const getCodeBy = async (data) => {
+  try {
+    const code = await codes.findOne(data);
+    return code;
+  } catch (error){
+    console.log(error);
+    return null;
+  };
+};
+
+const deleteCode = async (data) => {
+  try {
+    await codes.deleteOne(data);
+    return true;
+  } catch (error){
+    console.log(error);
+    return false;
+  };
+};
 
 
 module.exports = {
   connectDb,
   createUser,
   getUserBy,
-  updateUser
+  updateUser,
+  createCode,
+  getCodeBy,
+  deleteCode
 };

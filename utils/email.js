@@ -10,6 +10,15 @@ const transporter = nodemailer.createTransport({
   }
 });
 
+const send = async (mailOptions) => {
+    try {
+        const info = await transporter.sendMail(mailOptions);
+        console.log('Email sent: ' + info.response);
+    } catch (error) {
+        console.error('Error sending email:', error);
+    };
+};
+
 const sendVerificationEmail = async (email, activationCode) => {
   const  url = `${SITE_URL}/auth/activate?token=${activationCode}`;
   const mailOptions = {
@@ -111,14 +120,25 @@ const sendVerificationEmail = async (email, activationCode) => {
 </html>
 `
   };
-  try {
-    const info = await transporter.sendMail(mailOptions);
-    console.log('Email sent: ' + info.response);
-  } catch (error) {
-    console.error('Error sending email:', error);
-  }
+    await send(mailOptions);
+};
+
+
+const sendVerificationCode = async (email, code) => {
+    const mailOptions = {
+        from: `LoadXpress <${process.env.SMTP_USER}>`,
+        to: email,
+        subject: 'Your Code - '+code,
+        html: `
+            <h1>Your Verification Code</h1>
+            <p>Your verification code is: <strong>${code}</strong></p>
+            <p>This code will expire in 5 minutes.</p>
+        `
+    };
+    await send(mailOptions);
 };
 
 module.exports = {
-  sendVerificationEmail
+  sendVerificationEmail,
+  sendVerificationCode
 };
