@@ -151,16 +151,7 @@
                                 id="passkeyBtn"
                                 type="button"
                             >
-                                <svg
-                                    viewBox="0 0 24 24"
-                                    fill="currentColor"
-                                    width="22"
-                                >
-                                    <path
-                                        d="M17.05 20.28c-.98.95-2.05.8-3.08.35-1.09-.46-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.35C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.74 1.18 0 2.45-1.11 4.12-.76 1.76.36 2.76 1.25 3.51 2.27-3.18 1.84-2.58 5.67.66 7.15-.65 1.54-1.52 2.74-2.45 3.57zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z"
-                                    />
-                                </svg>
-                                Passkey
+    <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24"><path fill="#000" d="M3 20v-2.8q0-.85.438-1.562T4.6 14.55q1.55-.775 3.15-1.162T11 13q.5 0 1 .038t1 .112q-.1 1.45.525 2.738T15.35 18v2zm16 3l-1.5-1.5v-4.65q-1.1-.325-1.8-1.237T15 13.5q0-1.45 1.025-2.475T18.5 10t2.475 1.025T22 13.5q0 1.125-.638 2t-1.612 1.25L21 18l-1.5 1.5L21 21zm-8-11q-1.65 0-2.825-1.175T7 8t1.175-2.825T11 4t2.825 1.175T15 8t-1.175 2.825T11 12m7.5 2q.425 0 .713-.288T19.5 13t-.288-.712T18.5 12t-.712.288T17.5 13t.288.713t.712.287"/></svg>                                          Passkey
                             </button>
                         </div>
 
@@ -284,10 +275,56 @@
             const form = document.querySelector("form");
             passkeyBtn.addEventListener("click", async (e) => {
                 e.preventDefault();
-                alertIt(
-                    "info",
-                    "Signin with passkey is not available at the moment. Please use Email or Google Sign-In!",
-                );
+
+/*
+                const publicKey = {
+                  challenge: new Uint8Array(32),
+                  rp: { name: "Demo Site" },
+                  user: {
+                    id: new Uint8Array([1,2,3,4]),
+                    name: "demo@example.com",
+                    displayName: "Demo User"
+                  },
+                  pubKeyCredParams: [{ type: "public-key", alg: -7 }],
+                  authenticatorSelection: {
+                    residentKey: "required",      // <--- ensures username-less login
+                    userVerification: "required"
+                  },
+                  timeout: 60000,
+                  attestation: "none"
+                };
+
+                alert(await navigator.credentials.create({ publicKey }));
+
+*/
+                
+                try {
+                      const challenge = new Uint8Array(32);
+                      window.crypto.getRandomValues(challenge);
+
+                      // PublicKeyCredentialRequestOptions
+                      const publicKey = {
+                        challenge: challenge,
+                        rpId: window.location.hostname, // your domain
+                        allowCredentials: [], // empty = let browser show all passkeys
+                        timeout: 60000,
+                        userVerification: "required"
+                      };
+
+                      // This triggers the system passkey popup
+                      const assertion = await navigator.credentials.get({ publicKey });
+                      console.log("Passkey login popup done:", assertion);
+                     // alert("Login popup completed! See console for details.");
+
+                    alertIt("error", "Passkey login not success! Please sign-in with google or gmail");
+                    
+                    } catch (err) {
+                    
+                    //alertIt("error", "Error while signing in with passkey. Please try again later!");
+                    
+                    };
+
+                
             });
 
             const alertIt = (icon, title) => {

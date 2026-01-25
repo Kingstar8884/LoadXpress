@@ -5,17 +5,17 @@ const { v4: uuidv4 } = require('uuid');
 const { sendVerificationEmail } = require('../utils/email.js');
 const saltRounds = 10;
 
-let users = null, codes = null;
+let users = null, codes = null, transactions = null;
 
 const connectDb = async () => {
   try {
     client = new MongoClient(process.env.MONGO_URI)
     await client.connect();
     console.log('✅ Database Connected');
-    const db = client.db('loadxpress');
+    const db = client.db();
     users = db.collection('users');
+    transactions = db.collection('transactions');
     codes = db.collection('codes');
-
     const usersCollection = await db.listCollections({name: 'users'}).toArray();
     if (!usersCollection.length){
       await db.createCollection('users');
@@ -165,6 +165,60 @@ const deleteCode = async (data) => {
 };
 
 
+const addTransaction = async (data) => {
+  try {
+    await transactions.insertOne(data);
+    return true;
+  } catch (error){
+    console.log(error);
+    return false;
+  };
+};
+
+
+const getTransactions = async (userId, limit = 10) => {
+  try {
+    // Weekly totals for chart
+    const now = new Date();
+    const day = now.getDay(); // 0=Sun
+    const diffToMonday = day === 0 ? 6 : day - 1;
+    const startOfWeek = new Date(now);
+    startOfWeek.setDate(now.getDate() - diffToMonday);
+    startOfWeek.setHours(0,0,0,0);
+    const weeklyData = await transactions.aggregate([
+      { $match: { userId, createdAt: { $gte: startOfWeek } } },
+      { $group: { _id: { $dayOfWeek: "$createdAt" }, total: { $sum: "$amount" } } }
+    ]).toArray();
+    const totals = Array(7).fill(0);
+    weeklyData.forEach(r => { totals[r._id - 1] = r.total; });
+    const labels = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
+    const data = totals.slice(1).concat(totals[0]);
+    const trans = await transactions.find({ userId })
+      .sort({ createdAt: -1 })
+      .project({
+        _id: 0,
+        amount: 1,
+        type: 1,
+        status: 1,
+        sub: 1,
+        subInfo: 1,
+        debit: 1,
+        which: 1
+      })
+      .limit(limit)
+      .toArray()
+    return {
+      labels,
+      data,
+      transactions: trans
+    };
+  } catch (error){
+    console.log(error);
+    throw new Error('Error fetching transactions');
+  };
+};
+
+
 module.exports = {
   connectDb,
   createUser,
@@ -172,5 +226,7 @@ module.exports = {
   updateUser,
   createCode,
   getCodeBy,
-  deleteCode
+  deleteCode,
+  addTransaction,
+  getTransactions
 };

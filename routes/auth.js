@@ -3,14 +3,10 @@ const { OAuth2Client } = require("google-auth-library");
 const { verify } = require("hcaptcha");
 const { v4: uuidv4 } = require("uuid");
 const crypto = require("crypto");
-
-
 const {
   sendVerificationEmail,
   sendVerificationCode,
 } = require("../utils/email.js");
-
-
 const {
   createUser,
   getUserBy,
@@ -19,7 +15,6 @@ const {
   getCodeBy,
   deleteCode,
 } = require("../db/db.js");
-
 const googleClient = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
 
@@ -387,7 +382,7 @@ const authRoutes = async (fastify, options) => {
       let { email, password, token, c } = request.body;
       let signinWith = "email";
 
-      if (!c && (!email || !password, !token)) {
+      if (!c && (!email || !password || !token)) {
         return reply.send({
           success: false,
           error: "Please fill in all fields",
@@ -462,7 +457,7 @@ const authRoutes = async (fastify, options) => {
         $or: [{ email: email.toLowerCase() }],
       };
       if (googleId) findWith.$or.push({ googleId });
-
+      
       const user = await getUserBy(findWith);
 
       if (!user) {
@@ -479,9 +474,9 @@ const authRoutes = async (fastify, options) => {
         });
       }
 
-      if (user.signupWith === "email" && signinWith === "google" && googleId) {
+      if (user.signupWith === "email" && signinWith === "google" && !user.googleId && googleId) {
         await updateUser(
-          { _id: user._id },
+          { _id: user._id, googleId: { $exists: false } },
           {
             $set: {
               googleId: googleId,
@@ -493,7 +488,7 @@ const authRoutes = async (fastify, options) => {
             },
           },
         );
-      }
+      };
 
       if (
         user.signupWith === "google" &&

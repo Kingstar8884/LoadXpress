@@ -72,12 +72,12 @@
                     </div>
                     <div class="page-title">
                         <p>Welcome back,</p>
-                        <h1>Kingstar!</h1>
+                        <h1><%= user.first_name || "Rookie"%>!</h1>
                     </div>
                 </div>
 
                 <div class="profile-container">
-                    <img src="/assets/bolade.jpeg" alt="Profile" class="profile-trigger" onclick="toggleProfileMenu()">
+                    <img src="<%=user.picture%>" alt="Profile" class="profile-trigger" onclick="toggleProfileMenu()">
                     <div class="profile-menu" id="profileMenu">
                         <a href="/me/settings" class="menu-link">
                             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
@@ -100,7 +100,9 @@
 
                     <div class="balance-section">
                         <span style="font-size: 12px; opacity: 0.8">Total Balance</span>
-                        <h2>₦ 1,332, 245,200.43</h2>
+                        <h2>₦ <%= user.balance.toLocaleString(undefined, {                           minimumFractionDigits: 2, 
+maximumFractionDigits: 2
+}) %></h2>
                         <span class="growth-badge">+12%</span>
                     </div>
 
@@ -117,30 +119,30 @@
                 </div>
 
                 <div class="services-grid">
-                    <div class="service-box">
+                    <a class="service-box" href="/me/order">
                         <div class="sb-icon" style="background: #fff7ed; color: #ea580c;">
                             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
                         </div>
                         <h4>Airtime</h4>
-                    </div>
-                    <div class="service-box">
+                    </a>
+                    <a class="service-box" href="/me/order">
                         <div class="sb-icon" style="background: #eff6ff; color: #2563eb;">
                             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"></path></svg>
                         </div>
                         <h4>Data</h4>
-                    </div>
-                    <div class="service-box">
+                    </a>
+                    <a class="service-box" href="/me/order">
                         <div class="sb-icon" style="background: #f0fdf4; color: #16a34a;">
                             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"></line><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
                         </div>
                         <h4>Bills</h4>
-                    </div>
-                    <div class="service-box">
+                    </a>
+                    <a class="service-box" href="/me/order">
                         <div class="sb-icon" style="background: #fdf2f8; color: #db2777;">
                             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="8.5" cy="7" r="4"></circle><line x1="20" y1="8" x2="20" y2="14"></line><line x1="23" y1="11" x2="17" y2="11"></line></svg>
                         </div>
                         <h4>Referral</h4>
-                    </div>
+                    </a>
                 </div>
 
                 <div class="chart-card">
@@ -160,65 +162,24 @@
                     <a href="/me/transaction-history" style="color: var(--accent); font-weight: 700; font-size: 13px; text-decoration: none;">View All</a>
                 </div>
 
-                <div class="tx-row">
-                    <div style="display:flex; align-items:center">
-                        <img src="/assets/mtn.jpeg" class="tx-img"/>
-                        <div class="tx-info">
-                            <h5>MTN Airtime</h5>
-                            <p>0801 234 5678</p>
-                        </div>
-                    </div>
-                    <div class="tx-amount neg">-₦ 1,000.00</div>
+                <div id="loading-history" style="text-align: center; margin-block: 40px 30px;">
+                    Loading transactions...
                 </div>
 
-                <div class="tx-row">
-                    <div style="display:flex; align-items:center">
-                        <div class="tx-img" style="color: #16a34a; background: #dcfce7;">
-                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 19V5M5 12l7-7 7 7"/></svg>
-                        </div>
-                        <div class="tx-info">
-                            <h5>Wallet Fund</h5>
-                            <p>Bank Transfer</p>
-                        </div>
-                    </div>
-                    <div class="tx-amount pos">+₦ 50,000.00</div>
-                </div>
-
-                <div class="tx-row">
-                    <div style="display:flex; align-items:center">
-                        <div class="tx-img" style="color: #16a34a; background: #dcfce7;">
-                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 19V5M5 12l7-7 7 7"/></svg>
-                        </div>
-                        <div class="tx-info">
-                            <h5>Wallet Fund</h5>
-                            <p>Bank Transfer</p>
-                        </div>
-                    </div>
-                    <div class="tx-amount pos">+₦ 120,000.00</div>
-                </div>
-
-
-                <div class="tx-row">
-                    <div style="display:flex; align-items:center">
-                        
-                        <img src="/assets/airtel.png" class="tx-img"/>
-                        <div class="tx-info">
-                            <h5>AIRTEL Airtime</h5>
-                            <p>090 1994 8884</p>
-                        </div>
-                    </div>
-                    <div class="tx-amount neg">-₦ 1,250.00</div>
-                </div>
-
-                <div class="tx-row">
-                    <div style="display:flex; align-items:center">
-                        <img src="/assets/mtn.jpeg" class="tx-img"/>
-                        <div class="tx-info">
-                            <h5>MTN Airtime</h5>
-                            <p>0801 234 5678</p>
-                        </div>
-                    </div>
-                    <div class="tx-amount neg">-₦ 5,000.00</div>
+                <div id="empty-history" style="
+                    width: 100%;
+                    height: 200px;
+                    margin-block: 30px 20px;
+                    display: none;
+                    flex-direction: column;
+                    justify-content: center;
+                    align-items: center;
+                    gap: 10px;
+                    ">
+                    <img src="assets/empty.svg">
+                    <p>
+                        No transaction found.
+                    </p>
                 </div>
                 
             </section>
@@ -237,9 +198,22 @@
         </div>
     </div>
 
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="../assets/js/main.js"></script>
     
     <script>
+
+        const alertIt = (icon, title) => {
+            Swal.fire({
+                toast: true,
+                position: "top-end",
+                title,
+                icon,
+                timer: 5000,
+                timerProgressBar: true,
+                showConfirmButton: false,
+            });
+        };
  
         // 3. COPY FUNCTIONALITY
         function copyText(text) {
@@ -248,9 +222,92 @@
                 toast.className = "show";
                 setTimeout(() => { toast.className = toast.className.replace("show", ""); }, 3000);
             });
-        }
+        };
 
-        // 4. CHART CONFIG
+
+        function renderTransactions(transactions){
+
+            const txSection = document.querySelector(".tx-section");
+           document.getElementById("loading-history").style.display = 'none';
+            
+            if (!transactions || transactions.length === 0){
+                return document.getElementById("empty-history").style.display = "flex";
+            };
+
+            const helper = {
+                vtu: (t) => { return `<img src="/assets/${t}.png" class="tx-img"/>`},
+                fund: (t) => { return t === "debit" ? `
+<div style="color: #dc2626; background: #fee2e2;" class="tx-img">
+<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 19V5M5 12l7-7 7 7"/></svg>
+</div>
+` : `<div style="color: #16a34a; background: #dcfce7;" class="tx-img">
+<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M19 12l-7 7-7-7"/></svg>
+</div>
+`},
+                none: (t) => { return null}
+            };
+
+
+            for (const transaction of transactions){
+                try {
+                    //alert(JSON.stringify(transaction));
+                const { amount, type, sub, subInfo, debit, which } = transaction;
+                const element = document.createElement("div");
+                element.className = "tx-row";
+                const im = helper[type || "none"](which);
+
+                //alert(im);
+                
+                element.innerHTML = `
+    <div style="display:flex; align-items:center">
+    ${im}
+        <div class="tx-info">
+            <h5>${sub}</h5>
+            <p>${subInfo}</p>
+        </div>
+    </div>
+    <div class="tx-amount ${debit === true ? 'neg' : 'pos'}">${debit === true ? '-' : '+'}₦ ${amount.toLocaleString(undefined, {
+        minimumFractionDigits: 2, 
+        maximumFractionDigits: 2
+    })}</div>
+`;
+                txSection.appendChild(element);
+
+                } catch (e){
+                    alert(e.message);
+                    };
+            };
+            
+        };
+
+
+            
+
+
+    async function renderChartAndLastFiveTransactions() {
+        let labels;
+        let data;
+        let tss;
+        try {
+            const r = await fetch('/get-transactions');
+            if (!r.ok){
+                alertIt("error","Site error while fetching transactions. Please try again later!");
+                throw new Error();
+            };
+            const res = await r.json();
+            if (res.success !== true){
+                alertIt("error", res.error || "Site error while fetching transactions. Please try again later!");
+                throw new Error();
+            };
+            labels = res.details.labels;
+            data = res.details.data;
+            tss = res.details.transactions;
+        } catch (e){
+            labels = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+            data = [0, 0, 0, 0, 0, 0, 0];
+        };
+        renderTransactions(tss);
+        // 4. CHART CONFIG 
         const ctx = document.getElementById('spendingChart').getContext('2d');
         let gradient = ctx.createLinearGradient(0, 0, 0, 300);
         gradient.addColorStop(0, 'rgba(99, 102, 241, 0.4)');
@@ -259,10 +316,10 @@
         new Chart(ctx, {
             type: 'line',
             data: {
-                labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+                labels,
                 datasets: [{
-                    label: 'Spent',
-                    data: [12000, 19000, 8000, 35000, 12000, 32000, 24000],
+                    label: 'Transact',
+                    data,
                     borderColor: '#6366f1',
                     backgroundColor: gradient,
                     borderWidth: 2,
@@ -283,8 +340,9 @@
             }
         });
 
+    };
 
-
+        renderChartAndLastFiveTransactions();
         
 
         // 4. IMPROVED DRAGGABLE FAB
@@ -357,11 +415,6 @@
         trigger.addEventListener('click', (e) => {
             if (!isDragging) fab.classList.toggle('active');
         });
-
-
-       // setTimeout(() => fab.classList.add('active'), 1000);
-        
-
 
     </script>
 </body>

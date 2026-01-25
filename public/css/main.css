@@ -149,6 +149,7 @@
         text-align: center; gap: 8px; padding: 15px 5px; /* Compact padding */
         cursor: pointer; transition: 0.2s; 
         height: 100px; /* Fixed height for uniformity */
+        text-decoration: none;
     }
     .service-box:hover { 
         transform: translateY(-3px); border-color: var(--accent); 
