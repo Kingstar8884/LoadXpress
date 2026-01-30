@@ -2,8 +2,9 @@ const { ObjectId } = require("mongodb");
 const { getUserBy } = require("../db/db.js");
 
 
-const plans = {
-  airtel: {
+const plans = [
+  {
+    name: "Airtel",
     id: 3,
     data: [
       {
@@ -72,8 +73,8 @@ const plans = {
       }
     ]
   },
-
-  glo: {
+  {
+    name: "GLO",
     id: 2,
     data: [
       {
@@ -126,8 +127,8 @@ const plans = {
       }
     ]
   },
-
-  mtn: {
+  {
+    name: "MTN",
     id: 1,
     data: [
       {
@@ -196,7 +197,7 @@ const plans = {
       }
     ]
   }
-};
+];
 
 const meRoutes = async (fastify, options) => {
 
@@ -232,7 +233,8 @@ const meRoutes = async (fastify, options) => {
 
   fastify.get("/order", { preHandler: [authenticate, validateUser] } , async (request, reply) => {
     return reply.view("order", {
-      user: request.user
+      user: request.user,
+      plans
     });
   });
   

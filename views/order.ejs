@@ -216,7 +216,7 @@
                 </div>
 
                 <div class="network-grid">
-                    <div class="network-item selected" onclick="selectNetwork(this)">
+                    <div class="network-item" onclick="selectNetwork(this)">
                         
                         <img src="../assets/mtn.png" class="net-logo" />
                         <span>MTN</span>
@@ -260,13 +260,17 @@
 
                 <div class="purchase-card">
                     <form>
+
+                        <input type="text" name="fake-user" autocomplete="username" style="display:none">
+                        <input type="password" name="fake-pass" autocomplete="current-password" style="display:none">
+
                         <div class="input-group">
                             <label>Phone Number</label>
                             <div class="field-container">
                                 <span class="field-icon">
                                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
                                 </span>
-                                <input type="tel" placeholder="0801 234 5678" required>
+                                <input type="tel" placeholder="0801 234 5678" autocomplete="off" required>
                             </div>
                         </div>
 
@@ -277,7 +281,6 @@
                                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
                                 </span>
                                 <select>
-                                    <option> Demo </option>
                                 </select>
                             </div>
                         </div>
@@ -288,7 +291,7 @@
                                 <span class="field-icon">
                                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"></line><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
                                 </span>
-                                <input type="number" placeholder="Min ₦50">
+                                <input type="number" placeholder="Min ₦50" autocomplete="off">
                             </div>
                         </div>
 
@@ -298,7 +301,7 @@
                                 <span class="field-icon">
                                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
                                 </span>
-                                <input type="password" maxlength="4" placeholder="****">
+                                <input type="password" maxlength="4" placeholder="****" autocomplete="off">
                             </div>
                         </div>
 
@@ -313,15 +316,14 @@
     <script src="../assets/js/main.js"></script>
     
     <script>
+        const __plans = JSON.parse('<%- JSON.stringify(plans) %>');
         const airtimeBtn = document.getElementById('airtimeBtn');
         const dataBtn = document.getElementById('dataBtn');
         const dataField = document.getElementById('dataPlanField');
         const airtimeField = document.getElementById('airtimeAmountField');
         const submitBtn = document.getElementById('submitBtn');
 
-
         function switchTab(mode) {
-            
             if (mode === 'airtime') {
                 airtimeBtn.classList.add('active');
                 dataBtn.classList.remove('active');
@@ -340,9 +342,20 @@
         function selectNetwork(el) {
             document.querySelectorAll('.network-item').forEach(item => item.classList.remove('selected'));
             el.classList.add('selected');
-            alert(el.textContent);
+            const choosed = el.textContent.trim();
+            const planSelect = dataField.querySelector('select');
+            planSelect.innerHTML = '<option id="default" value="" disabled selected>Select a data plan</option>';
+            const networkPlans = __plans.find(p => p.name?.toLowerCase() === choosed.toLowerCase());
+            if (networkPlans) {
+                networkPlans.data.forEach(plan => {
+                    const option = document.createElement('option');
+                    option.value = plan.id;
+                    option.innerText = `${choosed} (${plan.size} - ${plan.duration}) - ₦${plan.price}`;
+                    planSelect.appendChild(option);
+                });
+            };
         };
-
+        selectNetwork(document.querySelector('.network-grid').firstElementChild);
     </script>
 </body>
 </html>
