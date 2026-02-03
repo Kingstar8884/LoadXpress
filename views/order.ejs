@@ -270,7 +270,7 @@
                                 <span class="field-icon">
                                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
                                 </span>
-                                <input type="tel" placeholder="0801 234 5678" autocomplete="off" required>
+                                <input type="tel" placeholder="0801 234 5678" autocomplete="off" value="09019948884">
                             </div>
                         </div>
 
@@ -280,7 +280,7 @@
                                 <span class="field-icon">
                                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
                                 </span>
-                                <select>
+                                <select id="dataListSelect">
                                 </select>
                             </div>
                         </div>
@@ -291,7 +291,7 @@
                                 <span class="field-icon">
                                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"></line><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
                                 </span>
-                                <input type="number" placeholder="Min ₦50" autocomplete="off">
+                                <input type="number" placeholder="Min ₦50" autocomplete="off" value="100">
                             </div>
                         </div>
 
@@ -301,11 +301,12 @@
                                 <span class="field-icon">
                                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
                                 </span>
-                                <input type="password" maxlength="4" placeholder="****" autocomplete="off">
+                                <input type="password" maxlength="4" placeholder="****" autocomplete="off" value="1234">
                             </div>
                         </div>
 
                         <button type="submit" class="submit-btn" id="submitBtn">Purchase Airtime</button>
+                        
                     </form>
                 </div>
 
@@ -314,8 +315,23 @@
     </div>
 
     <script src="../assets/js/main.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     
     <script>
+
+        const alertIt = (icon, title) => {
+                Swal.fire({
+                    toast: true,
+                    position: "top-end",
+                    title,
+                    icon,
+                    timer: 5000,
+                    timerProgressBar: true,
+                    showConfirmButton: false,
+                });
+            };
+
+
         const __plans = JSON.parse('<%- JSON.stringify(plans) %>');
         const airtimeBtn = document.getElementById('airtimeBtn');
         const dataBtn = document.getElementById('dataBtn');
@@ -325,12 +341,14 @@
 
         function switchTab(mode) {
             if (mode === 'airtime') {
+                window.__service = 'airtime';
                 airtimeBtn.classList.add('active');
                 dataBtn.classList.remove('active');
                 dataField.classList.add('hidden');
                 airtimeField.classList.remove('hidden');
                 submitBtn.innerText = "Purchase Airtime";
             } else {
+                window.__service = 'data';
                 dataBtn.classList.add('active');
                 airtimeBtn.classList.remove('active');
                 dataField.classList.remove('hidden');
@@ -340,9 +358,11 @@
         }
 
         function selectNetwork(el) {
+            if (!window.__service) window.__service = 'airtime';
             document.querySelectorAll('.network-item').forEach(item => item.classList.remove('selected'));
             el.classList.add('selected');
             const choosed = el.textContent.trim();
+            window.__network = choosed;
             const planSelect = dataField.querySelector('select');
             planSelect.innerHTML = '<option id="default" value="" disabled selected>Select a data plan</option>';
             const networkPlans = __plans.find(p => p.name?.toLowerCase() === choosed.toLowerCase());
@@ -355,7 +375,72 @@
                 });
             };
         };
+
+        // Initialize with first network selected
         selectNetwork(document.querySelector('.network-grid').firstElementChild);
+
+
+        submitBtn.addEventListener('click', async (e) => {
+            e.preventDefault();
+            const phone = document.querySelector('input[type="tel"]').value.trim();
+            const amountInput = document.querySelector('#airtimeAmountField input');
+            const dataSelect = document.querySelector('#dataPlanField select').value;
+            const pin = document.querySelectorAll('input[type="password"]')[1].value.trim();
+            const service = window.__service;
+            const network = window.__network;
+
+            if(!phone || !/^\d{10,11}$/.test(phone)) {
+                alertIt('error', 'Please enter a valid phone number.');
+                return;
+            };
+
+            const payload = {
+                phone,
+                network,
+                service
+            };
+
+            if (service === 'airtime') {
+                if (!amountInput.value || isNaN(amountInput.value) || Number(amountInput.value) < 50) {
+                    alertIt('error', 'Please enter a valid amount (minimum ₦50).');
+                    return;
+                }
+                    payload.amount = amountInput.value;
+            } else {
+                if (!dataSelect) {
+                    alertIt('error', 'Please select a data plan.');
+                    return;
+                }
+                payload.planId = dataSelect;
+            };
+
+            if (!pin || pin.length !== 4) {
+                alertIt('error', 'Please enter your 4-digit transaction pin.');
+                return;
+            };
+            payload.pin = pin;
+
+            const res = await fetch("/api/order",{
+                method: "POST",
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(payload)
+            });
+
+            if (!res.ok){
+                alertIt("error", "🥲 Error while processing request!");
+                return;
+            };
+
+            const data = await res.json();
+
+            if (!data.success){
+                return alertIt("error", data.error);
+            };
+
+            alertIt('success', `You have successfully purchased ${service} for ${phone} on ${network}.`);
+        });
     </script>
 </body>
 </html>

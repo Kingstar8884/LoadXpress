@@ -1,7 +1,6 @@
 const { ObjectId } = require("mongodb");
 const { getUserBy } = require("../db/db.js");
 
-
 const plans = [
   {
     name: "Airtel",

@@ -306,7 +306,7 @@ maximumFractionDigits: 2
         let data;
         let tss;
         try {
-            const r = await fetch('/get-transactions');
+            const r = await fetch('/api/get-transactions');
             if (!r.ok){
                 alertIt("error","Site error while fetching transactions. Please try again later!");
                 throw new Error();
