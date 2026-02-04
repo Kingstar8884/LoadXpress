@@ -211,8 +211,10 @@
 
             <div class="page-wrapper">
                 <div class="toggle-container">
-                    <button class="toggle-btn active" id="airtimeBtn" onclick="switchTab('airtime')">Buy Airtime</button>
-                    <button class="toggle-btn" id="dataBtn" onclick="switchTab('data')">Buy Data</button>
+                    <button class="toggle-btn active" id="airtimeBtn" onclick="switchTab('airtime')">Airtime</button>
+                    <button class="toggle-btn" id="dataBtn" onclick="switchTab('data')">Data</button>
+                    <button class="toggle-btn" id="electricityBtn" onclick="switchTab('electricity')">Electricity</button>
+                    <button class="toggle-btn" id="cablesBtn" onclick="switchTab('cables')">Cables</button>
                 </div>
 
                 <div class="network-grid">
@@ -235,6 +237,32 @@
                         
                         <img src="../assets/9m.png" width="35" height="35"  style="border-radius: 50%;" />
                         <span>9mobile</span>
+                    </div>
+                </div>
+
+
+
+
+                <div class="network-grid">
+                    <div class="network-item" onclick="selectNetwork(this)">
+
+                        <img src="../assets/electricity.jpeg" class="net-logo" />
+                        <span>Electricity</span>
+                    </div>
+                    <div class="network-item" onclick="selectNetwork(this)">
+
+                        <img src="../assets/gotv.png" class="net-logo" />
+                        <span>GOTV</span>
+                    </div>
+                    <div class="network-item" onclick="selectNetwork(this)">
+
+                        <img src="../assets/dstv.webp" class="net-logo" />
+                        <span>DSTV</span>
+                    </div>
+                    <div class="network-item" onclick="selectNetwork(this)">
+
+                        <img src="../assets/startimes.webp" width="35" height="35"  style="border-radius: 50%;" />
+                        <span>Startimes</span>
                     </div>
                 </div>
 
@@ -291,7 +319,7 @@
                                 <span class="field-icon">
                                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"></line><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
                                 </span>
-                                <input type="number" placeholder="Min ₦50" autocomplete="off" value="100">
+                                <input type="number" placeholder="Min ₦100" autocomplete="off" value="100">
                             </div>
                         </div>
 
@@ -335,27 +363,39 @@
         const __plans = JSON.parse('<%- JSON.stringify(plans) %>');
         const airtimeBtn = document.getElementById('airtimeBtn');
         const dataBtn = document.getElementById('dataBtn');
+        const electricityBtn = document.getElementById('electricityBtn');
+        const cablesBtn = document.getElementById('cablesBtn');
+        const menuBtns = document.querySelectorAll(".toggle-container button");
         const dataField = document.getElementById('dataPlanField');
         const airtimeField = document.getElementById('airtimeAmountField');
         const submitBtn = document.getElementById('submitBtn');
 
+
         function switchTab(mode) {
+
+            Array.from(menuBtns).forEach(btn => btn.classList.remove('active'));
+            
             if (mode === 'airtime') {
                 window.__service = 'airtime';
                 airtimeBtn.classList.add('active');
-                dataBtn.classList.remove('active');
-                dataField.classList.add('hidden');
-                airtimeField.classList.remove('hidden');
+//dataField.classList.add('hidden');
+                //airtimeField.classList.remove('hidden');
                 submitBtn.innerText = "Purchase Airtime";
-            } else {
+            } else if (mode === 'data') {
                 window.__service = 'data';
                 dataBtn.classList.add('active');
-                airtimeBtn.classList.remove('active');
-                dataField.classList.remove('hidden');
-                airtimeField.classList.add('hidden');
+                //airtimeBtn.classList.remove('active');
+                //dataField.classList.remove('hidden');
+                //airtimeField.classList.add('hidden');
                 submitBtn.innerText = "Purchase Data";
+            } else if (mode === "electricity") {
+                window.__service = 'electricity';
+                electricityBtn.classList.add('active');
+            } else if (mode === 'cables'){
+                window.__service = 'cables';
+                cablesBtn.classList.add('active');
             }
-        }
+        };
 
         function selectNetwork(el) {
             if (!window.__service) window.__service = 'airtime';
@@ -401,8 +441,8 @@
             };
 
             if (service === 'airtime') {
-                if (!amountInput.value || isNaN(amountInput.value) || Number(amountInput.value) < 50) {
-                    alertIt('error', 'Please enter a valid amount (minimum ₦50).');
+                if (!amountInput.value || isNaN(amountInput.value) || Number(amountInput.value) < 100) {
+                    alertIt('error', 'Please enter a valid amount (minimum ₦100).');
                     return;
                 }
                     payload.amount = amountInput.value;

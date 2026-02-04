@@ -97,7 +97,7 @@ fastify.post("/api/order", {preHandler: authenticate}, async (request, reply) =>
   };
 
   if (service === 'airtime') {
-    if (!amount || isNaN(amount) || Number(amount) < 50) {
+    if (!amount || isNaN(amount) || Number(amount) < 100) {
       return reply.send({
         success: false,
         error: "Bad request!"
